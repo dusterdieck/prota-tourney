@@ -101,7 +101,9 @@ app.get('/api/tournaments', async (req, res) => {
 		}
 	})
 
+    console.log("data", tourneyData)
 	data.forEach(t => {
+        console.log("id", t.id)
 		if (!(t.id in tourneyData)) {
             tourneyData.push(t.id)
 			populateData(t.id);
