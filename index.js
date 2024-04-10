@@ -4,7 +4,7 @@ const path = require("path")
 const axios = require("axios")
 const cors = require('cors')
 
-app.use(cors())
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -13,6 +13,7 @@ const CHALLONGE_API_KEY = process.env.CHALLONGE_API_KEY;
 // Sets up the Express app to handle data parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cors())
 
 // dummy player and tourney data to try to avoid need for a ton of API calls
 
