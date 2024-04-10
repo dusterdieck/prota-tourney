@@ -103,6 +103,7 @@ app.get('/api/tournaments', async (req, res) => {
 
 	data.forEach(t => {
 		if (!(t.id in tourneyData)) {
+            tourneyData.push(t.id)
 			populateData(t.id);
 		}
 	});
