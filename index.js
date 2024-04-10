@@ -97,6 +97,10 @@ app.get('/api/halloffame', (req, res) => {
 	return res.json(playerData)
 })
 
+app.get("/", (req,res) => {
+    return res.send("Site is up")
+})
+
 app.listen(PORT, () => {
 	console.log(`App listening on PORT ${PORT}`);
 })
