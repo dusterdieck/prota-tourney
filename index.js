@@ -13,19 +13,20 @@ const CHALLONGE_API_KEY = process.env.CHALLONGE_API_KEY;
 // Sets up the Express app to handle data parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-const whitelist = ['http://localhost:3000', 'https://prota.tauniverse.com']
+app.use(cors())
+// const whitelist = ['http://localhost:3000', 'https://prota.tauniverse.com']
 
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (whitelist.indexOf(origin) !== -1 || !origin) {
-      callback(null, true)
-    } else {
-      callback(new Error('Not allowed by CORS'))
-    }
-  }
-}
+// const corsOptions = {
+//   origin: function (origin, callback) {
+//     if (whitelist.indexOf(origin) !== -1 || !origin) {
+//       callback(null, true)
+//     } else {
+//       callback(new Error('Not allowed by CORS'))
+//     }
+//   }
+// }
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 
 // dummy player and tourney data to try to avoid need for a ton of API calls
 
