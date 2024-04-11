@@ -14,22 +14,9 @@ const CHALLONGE_API_KEY = process.env.CHALLONGE_API_KEY;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors())
-// const whitelist = ['http://localhost:3000', 'https://prota.tauniverse.com']
-
-// const corsOptions = {
-//   origin: function (origin, callback) {
-//     if (whitelist.indexOf(origin) !== -1 || !origin) {
-//       callback(null, true)
-//     } else {
-//       callback(new Error('Not allowed by CORS'))
-//     }
-//   }
-// }
-
-// app.use(cors(corsOptions));
 
 // dummy player and tourney data to try to avoid need for a ton of API calls
-
+// medals are array of tourney ids
 // 231341: { // playerId as key
 // 	name: "Postal",
 // 	gold: 1,
@@ -38,10 +25,7 @@ app.use(cors())
 // }
 let playerData = {}
 
-// list of tourneys for which we have cached data
-let tourneyData = []
-
-const populateData = async (tourneyId) => {
+const populateData = async (tourneyId, tourneyData) => {
     console.log("hit challonge api", tourneyId)
 	const json = await axios.get(`https://api.challonge.com/v1/tournaments/${tourneyId}.json?api_key=${CHALLONGE_API_KEY}&include_participants=1`)
 
@@ -55,6 +39,7 @@ const populateData = async (tourneyId) => {
     json.data.tournament.participants.forEach(p => {
     	const player = p.participant;
     	if (player.final_rank == 1) {
+            tourneyData[tourneyId].winner = player.name;
     		if (player.id in playerData) {
     			playerData[player.id].gold += 1
     		} else {
@@ -93,22 +78,21 @@ const populateData = async (tourneyId) => {
 app.get('/api/tournaments', async (req, res) => {
 	const json = await axios.get(`https://api.challonge.com/v1/tournaments.json?api_key=${CHALLONGE_API_KEY}`)
 
-	const data = json.data.map(({tournament}) => {
-		return {
-			id: tournament.id,
-			name: tournament.name,
-			url: tournament.url
-		}
-	})
+    const tourneyData = {}
 
-	data.forEach(t => {
-		if (!(tourneyData.includes(t.id))) {
-            tourneyData.push(t.id)
-			populateData(t.id);
-		}
-	});
+	for (let {tournament} of json.data) {
+        tourneyData[tournament.id] = {
+            winner: "",
+            name: tournament.name,
+            url: tournament.url,
+            state: tournament.state,
+            started_at: tournament.started_at,
+            completed_at: tournament.completed_at,
+        }
+		await populateData(tournament.id, tourneyData);
+	};
 
-	return res.json(data);
+	return res.json(tourneyData);
 });
 
 app.get('/api/halloffame', (req, res) => {
