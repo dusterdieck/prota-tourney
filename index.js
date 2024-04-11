@@ -15,17 +15,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors())
 
-// dummy player and tourney data to try to avoid need for a ton of API calls
-// medals are array of tourney ids
-// 231341: { // playerId as key
-// 	name: "Postal",
-// 	gold: 1,
-// 	silver: 0,
-// 	bronze: 0
-// }
-let playerData = {}
 
-const populateData = async (tourneyId, tourneyData) => {
+
+
+const populateData = async (tourneyId, tourneyData, playerData) => {
     console.log("hit challonge api", tourneyId)
 	const json = await axios.get(`https://api.challonge.com/v1/tournaments/${tourneyId}.json?api_key=${CHALLONGE_API_KEY}&include_participants=1`)
 
@@ -35,6 +28,8 @@ const populateData = async (tourneyId, tourneyData) => {
 		silver: 0,
 		bronze: 0,
 	}
+
+    
 
     json.data.tournament.participants.forEach(p => {
     	const player = p.participant;
@@ -73,12 +68,23 @@ const populateData = async (tourneyId, tourneyData) => {
     		}
     	}
     })
+
 }
 
 app.get('/api/tournaments', async (req, res) => {
 	const json = await axios.get(`https://api.challonge.com/v1/tournaments.json?api_key=${CHALLONGE_API_KEY}`)
 
     const tourneyData = {}
+
+    // dummy player and tourney data to try to avoid need for a ton of API calls
+    // medals are array of tourney ids
+    // 231341: { // playerId as key
+    //  name: "Postal",
+    //  gold: 1,
+    //  silver: 0,
+    //  bronze: 0
+    // }
+    let playerData = {}
 
 	for (let {tournament} of json.data) {
         tourneyData[tournament.id] = {
@@ -89,15 +95,11 @@ app.get('/api/tournaments', async (req, res) => {
             started_at: tournament.started_at,
             completed_at: tournament.completed_at,
         }
-		await populateData(tournament.id, tourneyData);
+		await populateData(tournament.id, tourneyData, playerData);
 	};
 
-	return res.json(tourneyData);
+	return res.json({...tourneyData, hof: playerData});
 });
-
-app.get('/api/halloffame', (req, res) => {
-	return res.json(playerData)
-})
 
 app.get("/", (req,res) => {
     return res.send("Site is up")
