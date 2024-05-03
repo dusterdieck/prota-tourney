@@ -35,10 +35,10 @@ const populateData = async (tourneyId, tourneyData, playerData) => {
     	const player = p.participant;
     	if (player.final_rank == 1) {
             tourneyData[tourneyId].winner = player.display_name;
-    		if (player.email_hash in playerData) {
-    			playerData[player.email_hash].gold += 1
-    		} else if (player.display_name in playerData) {
-                playerData[player.display_name].gold += 1
+    		if (player.display_name in playerData) {
+    			playerData[player.display_name].gold += 1
+    		} else if (player.email_hash in playerData) {
+                playerData[player.email_hash].gold += 1
             } else if (player.email_hash) {
     			playerData[player.email_hash] = {
     				...dummyPlayer,
@@ -54,10 +54,10 @@ const populateData = async (tourneyId, tourneyData, playerData) => {
             }
     	}
     	else if (player.final_rank == 2) {
-    		if (player.email_hash in playerData) {
-    			playerData[player.email_hash].silver += 1
-    		} else if (player.display_name in playerData) {
+    		if (player.display_name in playerData) {
                 playerData[player.display_name].silver += 1
+            } else if (player.email_hash in playerData) {
+                playerData[player.email_hash].silver += 1
             } else if (player.email_hash) {
     			playerData[player.email_hash] = {
     				...dummyPlayer,
@@ -73,10 +73,10 @@ const populateData = async (tourneyId, tourneyData, playerData) => {
             }
     	}
     	else if (player.final_rank == 3) {
-    		if (player.email_hash in playerData) {
-    			playerData[player.email_hash].bronze += 1
-    		} else if (player.display_name in playerData) {
+    		if (player.display_name in playerData) {
                 playerData[player.display_name].bronze += 1
+            } else if (player.email_hash in playerData) {
+                playerData[player.email_hash].bronze += 1
             } else if (player.email_hash) {
     			playerData[player.email_hash] = {
     				...dummyPlayer,
