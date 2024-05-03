@@ -34,38 +34,62 @@ const populateData = async (tourneyId, tourneyData, playerData) => {
     json.data.tournament.participants.forEach(p => {
     	const player = p.participant;
     	if (player.final_rank == 1) {
-            tourneyData[tourneyId].winner = player.name;
-    		if (player.id in playerData) {
-    			playerData[player.id].gold += 1
-    		} else {
-    			playerData[player.id] = {
+            tourneyData[tourneyId].winner = player.display_name;
+    		if (player.email_hash in playerData) {
+    			playerData[player.email_hash].gold += 1
+    		} else if (player.display_name in playerData) {
+                playerData[player.display_name].gold += 1
+            } else if (player.email_hash) {
+    			playerData[player.email_hash] = {
     				...dummyPlayer,
-    				name: player.name,
+    				name: player.display_name,
     				gold: 1,
     			}
-    		}
+    		} else {
+                playerData[player.display_name] = {
+                    ...dummyPlayer,
+                    name: player.display_name,
+                    gold: 1,
+                }
+            }
     	}
     	else if (player.final_rank == 2) {
-    		if (player.id in playerData) {
-    			playerData[player.id].silver += 1
-    		} else {
-    			playerData[player.id] = {
+    		if (player.email_hash in playerData) {
+    			playerData[player.email_hash].silver += 1
+    		} else if (player.display_name in playerData) {
+                playerData[player.display_name].silver += 1
+            } else if (player.email_hash) {
+    			playerData[player.email_hash] = {
     				...dummyPlayer,
-    				name: player.name,
+    				name: player.display_name,
     				silver: 1,
     			}
-    		}
+    		} else {
+                playerData[player.display_name] = {
+                    ...dummyPlayer,
+                    name: player.display_name,
+                    silver: 1,
+                }
+            }
     	}
     	else if (player.final_rank == 3) {
-    		if (player.id in playerData) {
-    			playerData[player.id].bronze += 1
-    		} else {
-    			playerData[player.id] = {
+    		if (player.email_hash in playerData) {
+    			playerData[player.email_hash].bronze += 1
+    		} else if (player.display_name in playerData) {
+                playerData[player.display_name].bronze += 1
+            } else if (player.email_hash) {
+    			playerData[player.email_hash] = {
     				...dummyPlayer,
-    				name: player.name,
+    				name: player.display_name,
     				bronze: 1,
     			}
-    		}
+    		} else {
+                playerData[player.display_name] = {
+                    ...dummyPlayer,
+                    name: player.display_name,
+                    bronze: 1,
+                }
+            }
     	}
     })
 
