@@ -7,7 +7,7 @@ const cors = require('cors')
 
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8081;
 const CHALLONGE_API_KEY = process.env.CHALLONGE_API_KEY;
 
 // Sets up the Express app to handle data parsing
@@ -110,17 +110,21 @@ app.get('/api/tournaments', async (req, res) => {
     // }
     let playerData = {}
 
+    const afterDate = new Date("2024-10-26");
+
 	for (let {tournament} of json.data) {
-        tourneyData[tournament.id] = {
-            winner: "",
-            name: tournament.name,
-            url: tournament.url,
-            state: tournament.state,
-            started_at: tournament.started_at,
-            completed_at: tournament.completed_at,
+        if (new Date(tournament.started_at) <= afterDate || tournament.participants_count >= 6) {
+            tourneyData[tournament.id] = {
+                winner: "",
+                name: tournament.name,
+                url: tournament.url,
+                state: tournament.state,
+                started_at: tournament.started_at,
+                completed_at: tournament.completed_at,
+            }
+            await populateData(tournament.id, tourneyData, playerData);
         }
-		await populateData(tournament.id, tourneyData, playerData);
-	};
+    };
 
 	return res.json({...tourneyData, hof: playerData});
 });
