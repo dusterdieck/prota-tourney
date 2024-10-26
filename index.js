@@ -113,7 +113,7 @@ app.get('/api/tournaments', async (req, res) => {
     const afterDate = new Date("2024-10-26");
 
 	for (let {tournament} of json.data) {
-        if (new Date(tournament.started_at) <= afterDate || tournament.participants_count >= 6) {
+        if (new Date(tournament.started_at) < afterDate || tournament.participants_count >= 6) {
             tourneyData[tournament.id] = {
                 winner: "",
                 name: tournament.name,
